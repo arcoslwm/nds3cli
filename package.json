@@ -1,0 +1,25 @@
+{
+  "name": "atk-s3cli",
+  "version": "1.0.0",
+  "description": "simple cli for s3 bucket",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "ats3": "./bin/index.js"
+  },
+  "keywords": [
+    "cli",
+    "s3",
+    "bucket"
+  ],
+  "author": "arcos.lwm",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "aws-sdk": "^2.647.0",
+    "dotenv": "^8.2.0",
+    "mime-types": "^2.1.26",
+    "yargs": "^15.3.1"
+  }
+}
