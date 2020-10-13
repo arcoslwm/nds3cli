@@ -62,18 +62,18 @@ async function main() {
 
 async function deleteObjs(args) {
 
-    var paramsObj = {
+    let paramsObj = {
         Bucket: bucket,
         Key: args.file
     };
 
     try {
-        var objToDelete = await s3.getObject(paramsObj).promise();
+        let objToDelete = await s3.getObject(paramsObj).promise();
         // console.log("getObject: ",obj);
 
         if(objToDelete.ContentType===typeFolder){
 
-            var folderToDelete = args.file;
+            let folderToDelete = args.file;
 
             let paramsFolderToDelete = {
               Bucket: bucket,
@@ -82,13 +82,12 @@ async function deleteObjs(args) {
               MaxKeys: maxKeys
             };
 
-            var folderData = await s3.listObjects(paramsFolderToDelete).promise();
-            var keysToDelete = [];
-            var del = (folderData.CommonPrefixes.length>0) ? false:true;
+            let folderData = await s3.listObjects(paramsFolderToDelete).promise();
+            let keysToDelete = [];
 
             // console.log("folderData: ",folderData);
-            if(del===false){
-                return console.log("No se puede eliminar la carpeta y su contenido. posee carpetas anidadas");
+            if(folderData.CommonPrefixes.length>0){
+                return console.warn("No se puede eliminar la carpeta y su contenido. posee carpetas anidadas");
             }
 
             folderData.Contents.forEach(e => {
@@ -106,7 +105,7 @@ async function deleteObjs(args) {
 
                 readline.close();
                 if (confirm === 'y' && keysToDelete.length>0) {
-                    var paramsKeysToDelete = {
+                    let paramsKeysToDelete = {
                         Bucket: bucket,
                         Delete: {
                             Objects: keysToDelete,
@@ -114,7 +113,10 @@ async function deleteObjs(args) {
                         }
                     };
                     s3.deleteObjects(paramsKeysToDelete, function(err, data) {
-                        if (err) console.log(err, err.stack); // error
+                        if (err){
+                            console.error("s3 deleteObjects Error: ");
+                            console.error(err, err.stack); // error
+                        }
                         else {
                             console.log(data); // deleted
                             console.log("contenido Eliminado!"); // deleted
@@ -131,7 +133,7 @@ async function deleteObjs(args) {
                 }
             });
         }
-        else {
+        else {//delete archivo
             // console.log(objToDelete);
             const readline = require('readline').createInterface({
                 input: process.stdin,
@@ -169,7 +171,7 @@ function mkdir(args){
     }
     folderInS3 = (args.folder.slice(-1)[0] !== delimiter) ? args.folder+delimiter : args.folder;
 
-    var uploadParams = {Bucket: bucket, Key: folderInS3, ContentType: typeFolder, Body: ''};
+    let uploadParams = {Bucket: bucket, Key: folderInS3, ContentType: typeFolder, Body: ''};
 
     console.log("  creando carpeta: ",uploadParams);
     s3.upload (uploadParams, function (err, data) {
@@ -183,7 +185,7 @@ function mkdir(args){
 }
 
 function upload(args){
-    var folderInS3 = "";
+    let folderInS3 = "";
     if(args.folderIns3 !== undefined){//con carpeta en argumentos
         folderInS3 = (args.folderIns3.slice(-1)[0] !== delimiter) ? args.folderIns3+delimiter : args.folderIns3;
     }
@@ -308,17 +310,18 @@ function listResultObjects(err,data){
 }
 
 //recibe Size en bytes y devuelve string legible
-function getSizeString(Size){
-    if(Size>1024*1024){
-        var size = Size/(1024*1024);
-        var ssize = size.toFixed(1)+'Mb';
+function getSizeString(Size) {
+    let ssize ="";
+    if (Size > 1024 * 1024) {
+        let size = Size / (1024 * 1024);
+        ssize = size.toFixed(1) + 'Mb';
     }
-    else if (Size>1023){
-        var size = Size/(1024);
-        var ssize = size.toFixed(1)+'Kb';
+    else if (Size > 1023) {
+        let size = Size / (1024);
+        ssize = size.toFixed(1) + 'Kb';
     }
     else {
-        var ssize = Size+' b  ';
+        ssize = Size + ' b  ';
     }
     return ssize;
 }
