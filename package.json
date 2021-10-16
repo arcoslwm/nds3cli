@@ -21,9 +21,9 @@
     "author": "arcos.lwm",
     "license": "UNLICENSED",
     "dependencies": {
-        "aws-sdk": "^2.647.0",
-        "dotenv": "^8.2.0",
-        "mime-types": "^2.1.26",
-        "yargs": "^15.3.1"
+        "aws-sdk": "^2.1009.0",
+        "dotenv": "^8.6.0",
+        "mime-types": "^2.1.33",
+        "yargs": "^15.4.1"
     }
 }
